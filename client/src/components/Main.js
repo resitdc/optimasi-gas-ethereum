@@ -5,12 +5,31 @@ class Main extends Component {
 
 	render() {
 		return (
-			<div id="content" className="col-md-12 d-flex justify-content-center text-center align-items-center">
-				<div className="col-md-4 d-flex flex-column">
-					<h2>What do you want?</h2>
-					<Link to="/sell"><button className="btn btn-light btn-lg mt-4" style={{minWidth: '100px'}}>Selling</button></Link>
-					<span>or</span>
-					<Link to="/buy"><button className="btn btn-info btn-lg" style={{minWidth: '100px'}}>Buying</button></Link>
+			<div id="content">
+				<div className="b-home-header">
+					<h1>HARDISK MARKETPLACE</h1>
+				</div>
+				<div className="b-list-data">
+					<div className="container">
+						<table className="b-table-data">
+							<thead>
+								<tr>
+									<th>Product Name</th>
+									<th>Type</th>
+									<th>Version</th>
+									<th>Price</th>
+								</tr>
+							</thead>
+							<thead>
+								<tr>
+									<td>Sandisk</td>
+									<td>SSD</td>
+									<td>NVME M2</td>
+									<td>3 ETH</td>
+								</tr>
+							</thead>
+						</table>
+					</div>
 				</div>
 			</div>
 		);

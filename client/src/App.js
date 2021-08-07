@@ -6,8 +6,9 @@ import './App.css';
 import Marketplace from './contracts/Marketplace.json'
 import Navbar from './components/Navbar'
 import Main from './components/Main'
-import Buy from './components/Buy'
 import Sell from './components/Sell'
+import Profile from './components/Profile'
+import "./assets/style/main.scss"
 
 class App extends Component {
 	constructor(props) {
@@ -19,6 +20,7 @@ class App extends Component {
 			loading: true
 		}
 
+		this.createProductOptimized = this.createProductOptimized.bind(this)
 		this.createProduct = this.createProduct.bind(this)
 		this.purchaseProduct = this.purchaseProduct.bind(this)
 	}
@@ -43,6 +45,7 @@ class App extends Component {
 		const web3 = window.web3
 		// Load account
 		const accounts = await web3.eth.getAccounts()
+		console.log("ACCOUNT ==>". accounts);
 		this.setState({ account: accounts[0] })
 		let balance = await web3.eth.getBalance(accounts[0]);
 		await this.setState({balance: web3.utils.fromWei(balance, 'Ether')})
@@ -53,14 +56,14 @@ class App extends Component {
 			this.setState({ marketplace })
 			// const productCount = await marketplace.methods.productCount().call()
 			// this.setState({ productCount })
-			// Load products
-			// for (var i = 1; i <= productCount; i++) {
-				// const product = await marketplace.methods.products(i)
-				// console.log("PRODUCT ===>", product);
+			// // Load products
+			// for (let i = 1; i <= productCount; i++) {
+			// 	const product = await marketplace.methods.productsOld(i)
+			// 	console.log("PRODUCT ===>", product);
 
-				// this.setState({
-				// products: [...this.state.products, product]
-				// })
+			// 	this.setState({
+			// 	products: [...this.state.products, product]
+			// 	})
 			// }
 			this.setState({ loading: false})
 		} else {
@@ -68,24 +71,35 @@ class App extends Component {
 		}
 	}
 
-	// createProduct(name, price, catatan) {
-	// 	this.setState({ loading: true })
-	// 	this.state.marketplace.methods.createProduct(name, price, catatan).send({ from: this.state.account })
-	// 	.once('receipt', async (receipt) => {
-	// 		this.setState({
-	// 			products: [...this.state.products, receipt.events.ProductCreated.returnValues]
-	// 		})
-	// 		window.location.reload()
-	// 	})
-	// }
-
 	createProduct(nama, storageCapacity, hardiskType, hardiskVersion, read, write, price, catatan) {
 		this.setState({ loading: true })
-		this.state.marketplace.methods.record(nama, storageCapacity, hardiskType, hardiskVersion, read, write, price, catatan).send({ from: this.state.account })
+		this.state.marketplace.methods.createProduct(nama, storageCapacity, hardiskType, hardiskVersion, read, write, price, catatan).send({ from: this.state.account })
 		.once('receipt', async (receipt) => {
-			// this.setState({
-			// 	products: [...this.state.products, receipt.events.ProductCreated.returnValues]
-			// })
+			this.setState({
+				products: [...this.state.products, receipt.events.ProductCreated.returnValues]
+			})
+			window.location.reload()
+		})
+	}
+
+	createProductOptimized(nama, storageCapacity, hardiskType, hardiskVersion, read, write, price, catatan) {
+		// CONVERT VALUE TO BYTE 32
+		nama = window.web3.utils.asciiToHex(nama)
+		storageCapacity = window.web3.utils.asciiToHex(storageCapacity)
+		hardiskType = window.web3.utils.asciiToHex(hardiskType)
+		hardiskVersion = window.web3.utils.asciiToHex(hardiskVersion)
+		read = window.web3.utils.asciiToHex(read)
+		write = window.web3.utils.asciiToHex(write)
+		price = window.web3.utils.asciiToHex(price)
+		catatan = window.web3.utils.asciiToHex(catatan)
+		
+		this.setState({ loading: true })
+		this.state.marketplace.methods.createProductOptimized(nama, storageCapacity, hardiskType, hardiskVersion, read, write, price, catatan).send({ from: this.state.account })
+		.once('receipt', async (receipt) => {
+			console.log("RECEIPT ===>", receipt.events);
+			this.setState({
+				products: [...this.state.products, receipt.events.ProductCreated.returnValues]
+			})
 			window.location.reload()
 		})
 	}
@@ -113,40 +127,11 @@ class App extends Component {
 						render={props => {
 							return (
 								<div>
-									<Navbar account={this.state.account} balance={this.state.balance} active="home" />
-									<div className="container" style={{marginTop: '50px'}}>
-										<div className="row">
-											<main role="main" className="col-lg-12 d-flex">
-											{ this.state.loading
-												? <div id="loader" className="text-center"><p className="text-center">Loading...</p></div>
-												: <Main />
-											}
-											</main>
-										</div>
-									</div>
-								</div>
-							)
-						}}
-					/>
-					<Route 
-						exact
-						path="/buy"
-						render={(props) => {
-							return (
-								<div>
-									<Navbar account={this.state.account} balance={this.state.balance} active="buy"/>
-									<div className="container" style={{marginTop: '50px'}}>
-										<div className="row">
-											{ this.state.loading
-												? <div id="loader" className="text-center"><p className="text-center">Loading...</p></div>
-												: <Buy
-													account={this.state.account}
-													products={this.state.products}
-													purchaseProduct={this.purchaseProduct} 
-													/>
-											}
-										</div>
-									</div>
+									<Navbar active="home" />
+									{ this.state.loading
+										? <div id="loader" className="text-center"><p className="text-center">Loading...</p></div>
+										: <Main />
+									}
 								</div>
 							)
 						}}
@@ -158,7 +143,7 @@ class App extends Component {
 						render={(props) => {
 							return (
 								<div>
-									<Navbar account={this.state.account} balance={this.state.balance} active="sell"/>
+									<Navbar active="sell"/>
 									<div className="container" style={{marginTop: '50px'}}>
 										<div className="row">
 											<main role="main" className="col-lg-12 d-flex">
@@ -168,11 +153,27 @@ class App extends Component {
 													products={this.state.products}
 													account={this.state.account}
 													createProduct={this.createProduct} 
+													createProductOptimized={this.createProductOptimized} 
 													/>
 											}
 											</main>
 										</div>
 									</div>
+								</div>
+							)
+						}}
+					/>
+
+					<Route 
+						exact
+						path="/profile"
+						render={(props) => {
+							return (
+								<div>
+									<Navbar active="profile"/>
+									<main role="main" className="col-lg-12 d-flex">
+										<Profile account={this.state.account} balance={this.state.balance} />
+									</main>
 								</div>
 							)
 						}}

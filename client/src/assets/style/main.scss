@@ -1,0 +1,110 @@
+body {
+    background-color: #37367b !important;
+}
+
+.b {
+    &-navbar {
+        background-color: #111;
+    }
+    &-home-header {
+        width: 100%;
+        display: flex;
+        position: relative;
+        min-height: 450px;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+        color: #FFF;
+        font-weight: bold;
+        background-color: #14044d;
+        & h1 {
+            font-size: 5rem;
+            font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+        }
+    }
+    &-list-data {
+        width: 100%;
+        display: flex;
+        flex-wrap: nowrap;
+        justify-content: center;
+        padding-top: 4rem;
+        padding-bottom: 7rem;
+    }
+    &-table-data {
+        width: 100%;
+        & tr, td, th {
+            padding-top: 13px;
+            padding-bottom: 13px;
+            color: #FFF;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+        & thead {
+            & tr {
+                padding-bottom: 1rem;
+                border-bottom: 1px solid rgb(206, 206, 206);
+            }
+        }
+        & td {
+            font-size: 1.5rem;
+        }
+        & tr {
+            &:hover {
+                background-color: rgba(0,0,0,0.2);
+            }
+        }
+    }
+    &-profile {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 400px;
+        width: 100%;
+        & &-box {
+            min-width: 60%;
+            padding: 30px 40px;
+            background-color: #14044d;
+            border-radius: 40px;
+            color: #FFF;
+            box-shadow: 0 0 10px 3px rgba(0,0,0,0.3);
+            & h1 {
+                text-align: center;
+                margin-bottom: 2rem;
+            }
+        }
+        & &-field {
+            width: 100%;
+            display: block;
+            text-align: center;
+            font-size: 1.2rem;
+            &::before {
+                width: 100%;
+                display: block;
+                text-align: center;
+                font-size: 0.8rem;
+                content: attr(label);
+                color: #0FF;
+            }
+        }
+    }
+    &-form-sell {
+        $border-radius: 40px;
+        min-width: 60%;
+        padding: 20px 20px;
+        background-color: #14044d;
+        border-radius: $border-radius;
+        color: #FFF;
+        box-shadow: 0 0 10px 3px rgba(0,0,0,0.3);
+        transition: all .3s;
+        &-box {
+            background-color: #14044d;
+            padding: 30px 40px;
+            width: 100%;
+            height: 100%;
+            border-radius: $border-radius - 10px;
+        }
+        &.b-special {
+            background: linear-gradient(to right, #BF953F, #FCF6BA, #B38728, #FBF5B7, #AA771C) !important;
+            transition: all .3s;
+        }
+    }
+}
